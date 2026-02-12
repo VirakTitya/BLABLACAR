@@ -1,5 +1,5 @@
-import 'package:blabla/model/ride_pref/ride_pref.dart';
-import '../../../services/ride_prefs_service.dart';
+import 'package:blablacar/model/ride_pref/ride_pref.dart';
+import 'package:blablacar/services/ride_prefs_service.dart';
 import 'package:flutter/material.dart';
 import '../../theme/theme.dart';
 import 'widgets/ride_prefs_form.dart';
@@ -17,6 +17,8 @@ class RidePrefsScreen extends StatelessWidget {
 
   void onRidePrefSelected(RidePref ridePref) {
     // TODO
+    // Set the selected ride preference so other parts of the app can use it.
+    RidePrefsService.selectedRidePref = ridePref;
   }
 
   @override
@@ -48,32 +50,30 @@ class RidePrefsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+
               // 2 - THE FORM
               RidePrefForm(initRidePref: RidePrefsService.selectedRidePref),
               SizedBox(height: BlaSpacings.m),
 
-              // 3 - THE HISTORY
-              _buildHistory(),
+              // 3 - THE HISTORY 
+              SizedBox(
+                height: 200, // Set a fixed height
+                child: ListView.builder(
+                  shrinkWrap: true, // Fix ListView height issue
+                  physics: AlwaysScrollableScrollPhysics(),
+                  itemCount: RidePrefsService.ridePrefsHistory.length,
+                  itemBuilder: (ctx, index) => RidePrefsTile(
+                    ridePref: RidePrefsService.ridePrefsHistory[index],
+                    onPressed: () => onRidePrefSelected(
+                      RidePrefsService.ridePrefsHistory[index],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildHistory() {
-    return SizedBox(
-      height: 200, // Set a fixed height
-      child: ListView.builder(
-        shrinkWrap: true, // Fix ListView height issue
-        physics: AlwaysScrollableScrollPhysics(),
-        itemCount: RidePrefsService.ridePrefsHistory.length,
-        itemBuilder: (ctx, index) => RidePrefsTile(
-          ridePref: RidePrefsService.ridePrefsHistory[index],
-          onPressed: () =>
-              onRidePrefSelected(RidePrefsService.ridePrefsHistory[index]),
-        ),
-      ),
     );
   }
 
