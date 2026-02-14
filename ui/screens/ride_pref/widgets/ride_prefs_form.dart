@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../model/ride/locations.dart';
-import '../../../../data/dummy_data.dart';
 import '../../../../model/ride_pref/ride_pref.dart';
+import '../../../../ui/widgets/location_picker.dart';
 
 ///
 /// A Ride Preference From is a view to select:
@@ -160,23 +160,11 @@ class _RidePrefFormState extends State<RidePrefForm> {
   }
 
   Future<void> _pickLocation(BuildContext context, {required bool isDeparture}) async {
-    // Use fake locations from dummy data for the picker.
-    final sample = fakeLocations;
-
     final picked = await showModalBottomSheet<Location>(
       context: context,
-      builder: (ctx) => ListView.separated(
-        shrinkWrap: true,
-        itemBuilder: (c, i) {
-          final loc = sample[i];
-          return ListTile(
-            title: Text(loc.name),
-            subtitle: Text(loc.country.name),
-            onTap: () => Navigator.of(ctx).pop(loc),
-          );
-        },
-        separatorBuilder: (_, __) => const Divider(height: 1),
-        itemCount: sample.length,
+      isScrollControlled: true,
+      builder: (ctx) => LocationPicker(
+        initialLocation: isDeparture ? departure : arrival,
       ),
     );
 
